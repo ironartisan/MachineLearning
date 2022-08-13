@@ -1,7 +1,7 @@
 ---
-sort: 20
+sort: 100
 ---
 
-# 深度学习
+# 其他未分类
 
 {% include list.liquid %}

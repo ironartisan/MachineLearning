@@ -1,7 +1,7 @@
 ---
-sort: 20
+sort: 5
 ---
 
-# 深度学习
+# 线性代数
 
 {% include list.liquid %}
