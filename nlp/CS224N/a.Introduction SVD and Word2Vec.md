@@ -1,13 +1,19 @@
-# 1.NLP介绍与词向量初步
+# A.Note1:词向量、SVD分解与Word2Vec
 
-第1课直接切入语言和词向量，讲解了自然语言处理的基本概念，文本表征的方法和演进，包括word2vec等核心方法，词向量的应用等。
+CS224n是顶级院校斯坦福出品的深度学习与自然语言处理方向专业课程，核心内容覆盖RNN、LSTM、CNN、transformer、bert、问答、摘要、文本生成、语言模型、阅读理解等前沿内容。
 
-- [自然语言与文字](##1自然语言与词汇含义)
-- [word2vec介绍](##2Word2vec介绍)
-- [Word2vec目标函数](##3Word2vec目标函数)
-- [Word2vec预测函数](##4Word2vec预测函数)
-- [优化函数](##5优化函数)
+本篇笔记对应斯坦福CS224n自然语言处理专项课程的第1个知识板块：NLP与词向量。首先介绍了自然语言处理(NLP)的概念及其面临的问题，进而介绍词向量和其构建方法（包括基于共现矩阵降维和Word2Vec）。
 
+内容：
+- 自然语言处理/Natural Language Processing(NLP)
+- 词向量/Word Vectors
+- SVD矩阵分解
+- Skip-gram
+- 负例采样
+- transformer
+- CBOW
+- 层次化softmax
+- Word2Vec
 ## 1.自然语言与词汇含义
 ### 1.1 人类的语言与词汇含义
 
