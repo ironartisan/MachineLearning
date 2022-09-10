@@ -109,7 +109,7 @@ $$
 \frac{\sum_{i=1}^{k} \sigma_{i}}{\sum_{i=1}^{\mid V \mid} \sigma_{i}}
 $$
 
-然后取子矩阵 $$U_{1:|V|, 1: k}$$ 作为词嵌入矩阵。这就给出了词汇表中每个词的 $$k$$ 维表示。
+然后取子矩阵 $$U_{1:\mid V \mid, 1: k}$$ 作为词嵌入矩阵。这就给出了词汇表中每个词的 $$k$$ 维表示。
 
 ![20220824222315-2022-08-24-22-23-15](https://cdn.jsdelivr.net/gh/ironartisan/picRepo/20220824222315-2022-08-24-22-23-15.png)
 
@@ -208,22 +208,22 @@ $$v$$ 是输入词矩阵，使得当其为模型的输入时， $$v$$  的第$$i
 首先我们对CBOW模型作出以下定义：
 
 $$w_i$$ ：词汇表 $$V$$ 中的单词 $$i$$
-$$\mathcal{V} \in \mathbb{R}^{n \times|V|}$$ ：输入词矩阵
+$$\mathcal{V} \in \mathbb{R}^{n \times \mid V \mid}$$ ：输入词矩阵
 $$v_i$$ ： $$v$$ 的第 $$i$$ 列，单词 $$w_i$$ 的输入向量表示
-$$\mathcal{u} \in \mathbb{R}^{|V| \times n}$$ ：输出词矩阵
+$$\mathcal{u} \in \mathbb{R}^{\mid V \mid \times n}$$ ：输出词矩阵
 $$u_i$$ ：  $$u$$ 的第 $$i$$ 行，单词 $$w_i$$ 的输出向量表示
 
 分解为以下步骤：
 - 我们为大小为 $$m$$ 的输入上下文词汇，生成one-hot词向量$$\left(x^{(c-m)}, \cdots, x^{(c-1)}, x^{(c+1)}, \cdots, x^{(c+m)}\in \mathbb{R}^{\mid V \mid}\right)$$
 - 基于上述one-hot输入计算得到嵌入词向量 $$\left(v_{c-m}=\mathcal{V} x^{(c-m)}, v_{c-m+1}=\mathcal{V} x^{(c-m+1)}, \cdots, v_{c+m}=\mathcal{V} x^{(c+m)} \in \mathbb{R}^{n}\right)$$
 - 对上述的词向量求平均值 $$\hat{v}=\frac{v_{c-m}+v_{c-m+1}+\cdots+v_{c+m}}{2 m} \in \mathbb{R}^{n}$$
-- 计算分数向量 $$z=\mathcal{U} \hat{v} \in \mathbb{R}^{\mid V \mid V\mid V \mid}$$ 。相似的词对向量的点积值大，这会令相似的词更为靠近，从而获得更高的分数
+- 计算分数向量 $$z=\mathcal{U} \hat{v} \in \mathbb{R}^{\mid V \mid}$$ 。相似的词对向量的点积值大，这会令相似的词更为靠近，从而获得更高的分数
 - 将分数通过softmax转换为概率 $$ \hat{y}=\operatorname{softmax}(z) \in \mathbb{R}^{\mid V \mid} $$
--  我们希望生成的概率 $$ \hat{y} \in \mathbb{R}^{|V|}$$ 与实际的概率 $$y \in \mathbb{R}^{\mid V \mid} $$ （实际是one-hot表示）越接近越好（我们后续会构建交叉熵损失函数并对其进行迭代优化）
+-  我们希望生成的概率 $$ \hat{y} \in \mathbb{R}^{\mid V \mid}$$ 与实际的概率 $$y \in \mathbb{R}^{\mid V \mid} $$ （实际是one-hot表示）越接近越好（我们后续会构建交叉熵损失函数并对其进行迭代优化）
 
 这里softmax是一个常用的函数。它将一个向量转换为另外一个向量，其中转换后的向量的第 $$i$$ 个元素是 
-$$ \frac{e^{\hat{y}_{i}}}{\sum_{k=1}^{|V|} e^{\hat{y}_{k}}} $$ 
-。因为该函数是一个指数函数，所以值一定为正数。通过除以 $$\sum_{k=1}^{|V|} e^{\hat{y}_{k}}$$ 来归一化向量(使得 $$ \sum_{k=1}^{|V|} \hat{y}_{k}=1 $$ )得到概率。
+$$ \frac{e^{\hat{y}_{i}}}{\sum_{k=1}^{\mid V \mid} e^{\hat{y}_{k}}} $$ 
+。因为该函数是一个指数函数，所以值一定为正数。通过除以 $$\sum_{k=1}^{\mid V \mid} e^{\hat{y}_{k}}$$ 来归一化向量(使得 $$ \sum_{k=1}^{\mid V \mid} \hat{y}_{k}=1 $$ )得到概率。
 
 下图是CBOW模型的计算图示：
 
@@ -231,7 +231,7 @@ $$ \frac{e^{\hat{y}_{i}}}{\sum_{k=1}^{|V|} e^{\hat{y}_{k}}} $$
 
 如果有 $$u$$ 和 $$v$$  ，我们知道这个模型是如何工作的，那我们如何更新参数，学习这两个矩阵呢？和所有的机器学习任务相似，我们会构建目标函数，这里我们会使用交叉熵 $$H(\hat{y}, y)$$ 来构建损失函数，它也是信息论里提的度量两个概率分布的距离的方法。
 
-$$H(\hat{y}, y)=-\sum_{j=1}^{|V|} y_{j} \log \left(\hat{y}_{j}\right)$$
+$$H(\hat{y}, y)=-\sum_{j=1}^{\mid V \mid} y_{j} \log \left(\hat{y}_{j}\right)$$
 
 上面的公式中，$$y$$ 是one-hot向量。因此上面的损失函数可以简化为：
 
@@ -249,8 +249,8 @@ $$
 \begin{aligned}
 \operatorname{minimize} J &=-\log P\left(w_{c} \mid w_{c-m}, \cdots, w_{c-1}, w_{c+1}, \cdots, w_{c+m}\right) \\
 &=-\log P\left(u_{c} \mid \hat{v}\right) \\
-&=-\log \frac{\exp \left(u_{c}^{T} \hat{v}\right)}{\sum_{j=1}^{|V|} \exp \left(u_{j}^{T} \hat{v}\right)} \\
-&=-u_{c}^{T} \hat{v}+\log \sum_{j=1}^{|V|} \exp \left(u_{j}^{T} \hat{v}\right)
+&=-\log \frac{\exp \left(u_{c}^{T} \hat{v}\right)}{\sum_{j=1}^{\mid V \mid} \exp \left(u_{j}^{T} \hat{v}\right)} \\
+&=-u_{c}^{T} \hat{v}+\log \sum_{j=1}^{\mid V \mid} \exp \left(u_{j}^{T} \hat{v}\right)
 \end{aligned}
 $$
 
@@ -285,8 +285,8 @@ $$\mathcal{u} \in \mathbb{R}^{\mid V \mid \times n}$$ ：输出词矩阵
 $$u_i$$ ：  $$u$$ 的第 $$i$$ 行，单词 $$w_i$$ 的输出向量表示
 
 Skip-Gram的工作方式可以拆解为以下步骤：
-- 生成中心词的one-hot向量 $$x \in \mathbb{R}^{|V|}$$
-- 我们对中心词计算得到词嵌入向量 $$v_{c}=\mathcal{V} x \in \mathbb{R}^{|V|}$$
+- 生成中心词的one-hot向量 $$x \in \mathbb{R}^{\mid V \mid}$$
+- 我们对中心词计算得到词嵌入向量 $$v_{c}=\mathcal{V} x \in \mathbb{R}^{\mid V \mid}$$
 - 生成分数向量$$z=\mathcal{U} v_{c}$$
 - 将分数向量转化为概率$$\hat{y}=\operatorname{softmax}(z)$$,注意$$\hat{y}_{c-m}, \cdots, \hat{y}_{c-1}, \hat{y}_{c+1}, \cdots, \hat{y}_{c+m}$$是每个上下文词出现的概率
 - 我们希望我们生成的概率向量匹配真实概率$$y^{(c-m)}, \cdots, y^{(c-1)}, y^{(c+1)}, \cdots, y^{(c+m)}$$,one-hot向量是实际的输出
@@ -298,8 +298,8 @@ $$
 \operatorname{minimize} J &=-\log P\left(w_{c-m}, \cdots, w_{c-1}, w_{c+1}, \cdots, w_{c+m} \mid w_{c}\right) \\
 &=-\log \prod_{j=0, j \neq m}^{2 m} P\left(w_{c-m+j} \mid w_{c}\right) \\
 &=-\log \prod_{j=0, j \neq m}^{2 m} P\left(u_{c-m+j} \mid v_{c}\right) \\
-&=-\log \prod_{j=0, j \neq m}^{2 m} \frac{\exp \left(u_{c-m+j}^{T} v_{c}\right)}{\sum_{k=1}^{|V|} \exp \left(u_{k}^{T} v_{c}\right)} \\
-&=-\sum_{j=0, j \neq m}^{2 m} u_{c-m+j}^{T} v_{c}+2 m \log \sum_{k=1}^{|V|} \exp \left(u_{k}^{T} v_{c}\right)
+&=-\log \prod_{j=0, j \neq m}^{2 m} \frac{\exp \left(u_{c-m+j}^{T} v_{c}\right)}{\sum_{k=1}^{\mid V \mid} \exp \left(u_{k}^{T} v_{c}\right)} \\
+&=-\sum_{j=0, j \neq m}^{2 m} u_{c-m+j}^{T} v_{c}+2 m \log \sum_{k=1}^{\mid V \mid} \exp \left(u_{k}^{T} v_{c}\right)
 \end{aligned}
 $$
 
@@ -317,7 +317,7 @@ Skip-Gram模型的计算图示：
 
 ### 4.4 负例采样
 
-我们再回到需要优化的目标函数上，我们发现在词表很大的情况下，对 $${|V|}$$ 的求和计算量是非常大的。任何的更新或者对目标函数的评估都要花费 $$O(|V|)$$ 的时间复杂度。一个简单的想法是不去直接计算，而是去求近似值。
+我们再回到需要优化的目标函数上，我们发现在词表很大的情况下，对 $${\mid V \mid}$$ 的求和计算量是非常大的。任何的更新或者对目标函数的评估都要花费 $$O(\mid V \mid)$$ 的时间复杂度。一个简单的想法是不去直接计算，而是去求近似值。
 
 **因为softmax标准化要对对所有分数求和，CBOW和Skip Gram的损失函数J计算起来很昂贵！**
 
@@ -392,7 +392,7 @@ $$
 
 这个公式看起来非常复杂，我们来展开讲解一下。
 - 首先，我们将根据从根节点 $(n(w, 1))$ 到叶节点 $(w)$ 的路径的形状 (左右分支) 来计算相乘的项。如果 我们假设 $\operatorname{ch}(n)$ 一直都是 $n$ 的左节点，然后当路径往左时 $[n(w, j+1)=\operatorname{ch}(n(w, j))]$ 的值返 回 1 ，往右则返回0。
-- 此外， $[n(w, j+1)=\operatorname{ch}(n(w, j))]$ 提供了归一化的作用。在节点 $n$ 处，如果我们将去往左和右 节点的概率相加，对于 $v_{n}^{T} v_{w_{i}}$ 的任何值则可以检查， $\sigma\left(v_{n}^{T} v_{w_{i}}\right)+\sigma\left(-v_{n}^{T} v_{w_{i}}\right)=1$ 。归一化也 保证了 $\sum_{w=1}^{|V|} P\left(w \mid w_{i}\right)=1$ ，和普通的softmax是一样的。
+- 此外， $[n(w, j+1)=\operatorname{ch}(n(w, j))]$ 提供了归一化的作用。在节点 $n$ 处，如果我们将去往左和右 节点的概率相加，对于 $v_{n}^{T} v_{w_{i}}$ 的任何值则可以检查， $\sigma\left(v_{n}^{T} v_{w_{i}}\right)+\sigma\left(-v_{n}^{T} v_{w_{i}}\right)=1$ 。归一化也 保证了 $\sum_{w=1}^{\mid V \mid} P\left(w \mid w_{i}\right)=1$ ，和普通的softmax是一样的。
 
 最后我们计算点积来比较输入向量 $v_{w_{i}}$ 对每个内部节点向量 $v_{n(w, j)}^{T}$ 的相似度。下面我们给出一个例子。 以上图中的 $w_{2}$ 为例，从根节点要经过两次左边的边和一次右边的边才到达 $w_{2}$ ，因此
 
