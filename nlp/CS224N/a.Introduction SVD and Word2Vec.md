@@ -105,9 +105,7 @@ $$
 
 我们对矩阵 $$X$$ 使用SVD，观察奇异值(矩阵 $$S$$ 上对角线上元素)，根据方差百分比截断，留下前 $$k$$ 个元素：
 
-$$
-\frac{\sum_{i=1}^{k} \sigma_{i}}{\sum_{i=1}^{\mid V \mid} \sigma_{i}}
-$$
+$$\frac{\sum_{i=1}^{k} \sigma_{i}}{\sum_{i=1}^{\mid V \mid} \sigma_{i}}$$
 
 然后取子矩阵 $$U_{1:|V|, 1: k}$$ 作为词嵌入矩阵。这就给出了词汇表中每个词的 $$k$$ 维表示。
 
@@ -228,9 +226,7 @@ $$u_i$$ ：  $$u$$ 的第 $$i$$ 行，单词 $$w_i$$ 的输出向量表示
 
 如果有 $$u$$ 和 $$v$$  ，我们知道这个模型是如何工作的，那我们如何更新参数，学习这两个矩阵呢？和所有的机器学习任务相似，我们会构建目标函数，这里我们会使用交叉熵 $$H(\hat{y}, y)$$ 来构建损失函数，它也是信息论里提的度量两个概率分布的距离的方法。
 
-$$
-H(\hat{y}, y)=-\sum_{j=1}^{|V|} y_{j} \log \left(\hat{y}_{j}\right)
-$$
+$$H(\hat{y}, y)=-\sum_{j=1}^{|V|} y_{j} \log \left(\hat{y}_{j}\right)$$
 
 上面的公式中，$$y$$ 是one-hot向量。因此上面的损失函数可以简化为：
 
@@ -394,12 +390,12 @@ $$
 - 此外， $[n(w, j+1)=\operatorname{ch}(n(w, j))]$ 提供了归一化的作用。在节点 $n$ 处，如果我们将去往左和右 节点的概率相加，对于 $v_{n}^{T} v_{w_{i}}$ 的任何值则可以检查， $\sigma\left(v_{n}^{T} v_{w_{i}}\right)+\sigma\left(-v_{n}^{T} v_{w_{i}}\right)=1$ 。归一化也 保证了 $\sum_{w=1}^{|V|} P\left(w \mid w_{i}\right)=1$ ，和普通的softmax是一样的。
 
 最后我们计算点积来比较输入向量 $v_{w_{i}}$ 对每个内部节点向量 $v_{n(w, j)}^{T}$ 的相似度。下面我们给出一个例子。 以上图中的 $w_{2}$ 为例，从根节点要经过两次左边的边和一次右边的边才到达 $w_{2}$ ，因此
+
 $$
 \begin{aligned}
 p\left(w_{2} \mid w_{i}\right) &=p\left(n\left(w_{2}, 1\right), \text { left }\right) \cdot p\left(n\left(w_{2}, 2\right), \text { left }\right) \cdot p\left(n\left(w_{2}, 3\right), \text { right }\right) \\
 &=\sigma\left(v_{n\left(w_{2}, 1\right)}^{T} v_{w_{i}}\right) \cdot \sigma\left(v_{n\left(w_{2}, 2\right)}^{T} v_{w_{i}}\right) \cdot \sigma\left(-v_{n\left(w_{2}, 3\right)}^{T} v_{w_{i}}\right)
 \end{aligned}
-
 $$
 我们训练模型的目标是最小化负的对数似然 $-\log P\left(w \mid w_{i}\right)$ 。不是更新每个词的输出向量，而是更新更新 二叉树中从根结点到叶结点的路径上的节点的向量。
 
