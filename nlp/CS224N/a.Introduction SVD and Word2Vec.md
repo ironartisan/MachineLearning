@@ -218,10 +218,12 @@ $$u_i$$ ：  $$u$$ 的第 $$i$$ 行，单词 $$w_i$$ 的输出向量表示
 - 基于上述one-hot输入计算得到嵌入词向量 $$\left(v_{c-m}=\mathcal{V} x^{(c-m)}, v_{c-m+1}=\mathcal{V} x^{(c-m+1)}, \cdots, v_{c+m}=\mathcal{V} x^{(c+m)} \in \mathbb{R}^{n}\right)$$
 - 对上述的词向量求平均值 $$\hat{v}=\frac{v_{c-m}+v_{c-m+1}+\cdots+v_{c+m}}{2 m} \in \mathbb{R}^{n}$$
 - 计算分数向量 $$z=\mathcal{U} \hat{v} \in \mathbb{R}^{\mid V \mid V\mid V \mid}$$ 。相似的词对向量的点积值大，这会令相似的词更为靠近，从而获得更高的分数
-- 将分数通过softmax转换为概率 $$\hat{y}=\operatorname{softmax}(z) \in \mathbb{R}^{\mid V \mid}$$
--  我们希望生成的概率 $$\hat{y} \in \mathbb{R}^{|V|}$$ 与实际的概率 $$y \in \mathbb{R}^{\mid V \mid}$$ （实际是one-hot表示）越接近越好（我们后续会构建交叉熵损失函数并对其进行迭代优化）
+- 将分数通过softmax转换为概率 $$ \hat{y}=\operatorname{softmax}(z) \in \mathbb{R}^{\mid V \mid} $$
+-  我们希望生成的概率 $$ \hat{y} \in \mathbb{R}^{|V|}$$ 与实际的概率 $$y \in \mathbb{R}^{\mid V \mid} $$ （实际是one-hot表示）越接近越好（我们后续会构建交叉熵损失函数并对其进行迭代优化）
 
-这里softmax是一个常用的函数。它将一个向量转换为另外一个向量，其中转换后的向量的第 $$i$$ 个元素是 $$\frac{e^{\hat{y}_{i}}}{\sum_{k=1}^{|V|} e^{\hat{y}_{k}}}$$ 。因为该函数是一个指数函数，所以值一定为正数。通过除以 $$\sum_{k=1}^{|V|} e^{\hat{y}_{k}}$$ 来归一化向量(使得 $$\sum_{k=1}^{|V|} \hat{y}_{k}=1$$ )得到概率。
+这里softmax是一个常用的函数。它将一个向量转换为另外一个向量，其中转换后的向量的第 $$i$$ 个元素是 
+$$ \frac{e^{\hat{y}_{i}}}{\sum_{k=1}^{|V|} e^{\hat{y}_{k}}} $$ 
+。因为该函数是一个指数函数，所以值一定为正数。通过除以 $$\sum_{k=1}^{|V|} e^{\hat{y}_{k}}$$ 来归一化向量(使得 $$ \sum_{k=1}^{|V|} \hat{y}_{k}=1 $$ )得到概率。
 
 下图是CBOW模型的计算图示：
 
